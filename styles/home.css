@@ -1,0 +1,381 @@
+/* ========================================
+   HOME PAGE DASHBOARD STYLES
+   ======================================== */
+
+.home-dashboard {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: var(--sp-5);
+    padding: var(--sp-6);
+    max-width: 1400px;
+    margin: 0 auto;
+    animation: fadeIn 0.6s ease-out both;
+}
+
+@media (max-width: 1024px) {
+    .home-dashboard {
+        grid-template-columns: repeat(6, 1fr);
+        padding: var(--sp-6);
+    }
+}
+
+@media (max-width: 768px) {
+    .home-dashboard {
+        grid-template-columns: 1fr;
+        padding: var(--sp-4);
+    }
+}
+
+.home-card {
+    background: var(--c-glass-1);
+    border: 1px solid var(--c-border-light);
+    border-radius: var(--r-2xl);
+    padding: var(--sp-5);
+    box-shadow: var(--shadow-lg);
+    backdrop-filter: blur(var(--blur-glass));
+    -webkit-backdrop-filter: blur(var(--blur-glass));
+    transition: all 0.3s var(--ease-out);
+}
+
+.home-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+    border-color: var(--c-border-medium);
+}
+
+.home-card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    margin-bottom: var(--sp-4);
+    padding-bottom: var(--sp-3);
+    border-bottom: 1px solid var(--c-divider);
+}
+
+.home-card-header .icon {
+    font-size: var(--text-xl);
+    color: var(--c-text-secondary);
+}
+
+.home-card-header h3 {
+    font-size: var(--text-lg);
+    font-weight: var(--fw-bold);
+    color: var(--c-text-primary);
+}
+
+/* Hero Card - Full width */
+.hero-card {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: var(--sp-8) var(--sp-6);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(168, 85, 247, 0.1));
+    border: 1px solid var(--c-border-medium);
+}
+
+.hero-card .home-card-header {
+    display: none;
+}
+
+.hero-card h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: var(--fw-heavy);
+    letter-spacing: var(--ls-tighter);
+    color: var(--c-text-primary);
+    margin-bottom: var(--sp-3);
+    background: linear-gradient(135deg, var(--c-primary), #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-card p {
+    font-size: clamp(0.9rem, 1.8vw, 1.1rem);
+    color: var(--c-text-secondary);
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
+    font-weight: var(--fw-medium);
+}
+
+/* Stats Cards - 2 columns */
+.stats-card {
+    grid-column: span 6;
+}
+
+@media (max-width: 1024px) {
+    .stats-card {
+        grid-column: span 3;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-card,
+    .stats-card,
+    .time-card,
+    .calendar-card,
+    .quote-card,
+    .tags-card {
+        grid-column: span 1 !important;
+    }
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-6);
+}
+
+.stat-item {
+    text-align: center;
+    padding: var(--sp-4);
+    background: var(--c-glass-2);
+    border-radius: var(--r-xl);
+    border: 1px solid var(--c-border-light);
+}
+
+.stat-item .value {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: var(--fw-heavy);
+    color: var(--c-primary);
+    line-height: 1.1;
+    display: block;
+    margin-bottom: var(--sp-2);
+}
+
+.stat-item .label {
+    font-size: var(--text-xs);
+    color: var(--c-text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: var(--ls-wide);
+    font-weight: var(--fw-semibold);
+}
+
+/* Time & Calendar Cards Layout */
+.time-card {
+    grid-column: span 4;
+    grid-row: span 1;
+}
+
+.calendar-card {
+    grid-column: span 4;
+    grid-row: span 2;
+}
+
+.tags-card {
+    grid-column: span 4;
+    grid-row: span 2;
+}
+
+.recent-card {
+    grid-column: span 4;
+    grid-row: span 2;
+}
+
+@media (max-width: 1024px) {
+    .time-card,
+    .calendar-card,
+    .tags-card,
+    .recent-card {
+        grid-column: span 6;
+        grid-row: span 1;
+    }
+}
+
+#home-time {
+    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+    font-weight: var(--fw-heavy);
+    text-align: center;
+    padding: var(--sp-2) 0;
+    color: var(--c-text-primary);
+    font-variant-numeric: tabular-nums;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.calendar-grid-container {
+    width: 100%;
+    max-width: 400px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    text-align: center;
+}
+
+.calendar-weekday {
+    font-weight: var(--fw-bold);
+    font-size: 0.65rem;
+    color: var(--c-text-tertiary);
+    padding-bottom: var(--sp-1);
+}
+
+.calendar-day {
+    font-size: 0.7rem;
+    padding: 4px;
+    border-radius: var(--r-sm);
+    color: var(--c-text-secondary);
+    font-weight: var(--fw-medium);
+    transition: all 0.2s ease;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.calendar-day:not(:empty):hover {
+    background: var(--c-glass-2);
+    color: var(--c-text-primary);
+}
+
+.calendar-day.is-today {
+    background: var(--c-primary);
+    color: white;
+    font-weight: var(--fw-bold);
+    box-shadow: 0 4px 12px var(--c-primary-light);
+}
+
+/* Quote Card - 6 columns */
+.quote-card {
+    grid-column: span 6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 150px;
+}
+
+@media (max-width: 1024px) {
+    .quote-card {
+        grid-column: span 6;
+    }
+}
+
+.quote-card p {
+    font-style: italic;
+    font-size: var(--text-xl);
+    line-height: 1.8;
+    color: var(--c-text-secondary);
+    text-align: center;
+}
+
+/* Tag Cloud Container */
+
+.tag-cloud-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+    align-items: center;
+    justify-content: center;
+}
+
+.tag-cloud-item {
+    display: inline-block;
+    padding: var(--sp-2) var(--sp-4);
+    background: var(--c-glass-2);
+    border: 1px solid var(--c-border-light);
+    border-radius: var(--r-full);
+    font-weight: var(--fw-medium);
+    font-size: var(--text-sm);
+    color: var(--c-text-secondary);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tag-cloud-item:hover {
+    background: var(--c-primary);
+    color: white;
+    border-color: transparent;
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 4px 12px var(--c-primary-light);
+}
+
+/* Recent Files Card */
+.recent-card .recent-files-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: var(--sp-1);
+}
+
+.recent-file-item {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    padding: var(--sp-3);
+    background: var(--c-glass-2);
+    border-radius: var(--r-lg);
+    border: 1px solid var(--c-border-light);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.recent-file-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--c-primary);
+    transform: scaleY(0);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.recent-file-item:hover {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(168, 85, 247, 0.05));
+    border-color: var(--c-primary);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.recent-file-item:hover::before {
+    transform: scaleY(1);
+}
+
+.recent-file-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.recent-file-item:hover .recent-file-icon {
+    transform: scale(1.1);
+}
+
+.recent-file-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.recent-file-title {
+    font-size: var(--text-sm);
+    font-weight: var(--fw-semibold);
+    color: var(--c-text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 0.3s ease;
+}
+
+.recent-file-item:hover .recent-file-title {
+    color: var(--c-primary);
+}
+
+.recent-file-time {
+    font-size: var(--text-xs);
+    color: var(--c-text-tertiary);
+    margin-top: 2px;
+    transition: color 0.3s ease;
+}
+
+.recent-file-item:hover .recent-file-time {
+    color: var(--c-text-secondary);
+}

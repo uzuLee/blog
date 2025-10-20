@@ -1,0 +1,338 @@
+/* ========================================
+   ANIMATIONS & KEYFRAMES
+   ======================================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ========================================
+   BUTTONS - Glass Morphism Design
+   ======================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-5);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--r-full);
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: var(--c-text-primary);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+.btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(90, 162, 255, 0.5);
+  transform: translateY(-2px);
+  box-shadow:
+    0 8px 24px rgba(90, 162, 255, 0.2),
+    0 0 0 1px rgba(90, 162, 255, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn:active {
+  transform: translateY(0);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.btn.ghost {
+  background: transparent;
+  border: 1px solid transparent;
+  padding: var(--sp-2);
+  backdrop-filter: none;
+  box-shadow: none;
+}
+
+.btn.ghost:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transform: scale(1.05);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.btn.active {
+  background: linear-gradient(
+    135deg,
+    rgba(90, 162, 255, 0.3),
+    rgba(168, 85, 247, 0.3)
+  );
+  border-color: rgba(90, 162, 255, 0.5);
+  color: var(--c-primary);
+  box-shadow:
+    0 4px 16px rgba(90, 162, 255, 0.3),
+    0 0 0 1px rgba(90, 162, 255, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* ========================================
+   COMMAND PALETTE
+   ======================================== */
+
+#command-input,
+.graph-search {
+  width: 100%;
+  padding: var(--sp-3) var(--sp-5);
+  background: var(--c-glass-1);
+  border: 2px solid var(--c-border-light);
+  border-radius: var(--r-full);
+  color: var(--c-text-primary);
+  font-size: var(--text-sm);
+  font-family: var(--font-system);
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#command-input:focus,
+.graph-search:focus {
+  background: var(--c-glass-2);
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 3px var(--c-primary-light);
+}
+
+.command-results {
+  position: absolute;
+  top: calc(100% + var(--sp-3));
+  left: 0;
+  right: 0;
+  background: var(--c-glass-3);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--c-border-medium);
+  border-radius: var(--r-2xl);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  display: none;
+  z-index: var(--z-modal);
+  animation: scaleIn 0.2s ease-out;
+  max-height: 60vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Command results scrollbar - only show when content overflows */
+.command-results::-webkit-scrollbar {
+  width: 10px;
+}
+
+.command-results::-webkit-scrollbar-track {
+  background: transparent;
+  margin: var(--r-2xl) 0;
+}
+
+.command-results::-webkit-scrollbar-thumb {
+  background: var(--c-border-strong);
+  border-radius: var(--r-full);
+  border: 2px solid var(--c-glass-3);
+  background-clip: padding-box;
+}
+
+.command-results::-webkit-scrollbar-thumb:hover {
+  background: var(--c-primary);
+  border: 2px solid var(--c-glass-3);
+  background-clip: padding-box;
+}
+
+.command-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-4);
+  margin: var(--sp-1) var(--sp-2);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  border-radius: var(--r-lg);
+}
+
+.command-item:hover {
+  background: var(--c-glass-2);
+  border-color: var(--c-primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 0 8px var(--c-primary-light);
+}
+
+.cmd-icon {
+  font-size: var(--text-xl);
+  flex-shrink: 0;
+}
+
+.cmd-label {
+  flex: 1;
+  font-size: var(--text-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--c-text-primary);
+}
+
+.cmd-path {
+  font-size: var(--text-xs);
+  color: var(--c-text-tertiary);
+  font-family: var(--font-mono);
+}
+
+.cmd-context {
+    font-size: var(--text-xs);
+    color: var(--c-text-secondary);
+    margin-top: var(--sp-1);
+}
+
+.cmd-context mark,
+.cmd-label mark {
+    background: var(--c-primary-light);
+    color: var(--c-primary);
+    padding: 1px 2px;
+    border-radius: var(--r-sm);
+}
+
+
+
+/* ========================================
+   TAGS
+   ======================================== */
+
+.tag {
+  display: inline-block;
+  padding: var(--sp-2) var(--sp-4);
+  background: var(--c-glass-2);
+  border: 1px solid var(--c-border-light);
+  border-radius: var(--r-full);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--c-text-secondary);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.tag:hover {
+  background: linear-gradient(135deg, var(--c-primary), #a855f7);
+  color: white;
+  border-color: transparent;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 12px var(--c-primary-light);
+}
+
+/* ========================================
+   THEME TRANSITIONS
+   ======================================== */
+
+@supports (view-transition-name: none) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.3s;
+  }
+}
+
+[data-theme] {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
