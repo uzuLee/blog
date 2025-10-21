@@ -21,5 +21,5 @@ export const CONFIG = {
     // e.g., `https://example.com/callback.html`
     //
     // **Replace the placeholder below with your actual callback URL.**
-    oauthCallbackUrl: 'https://example.com/callback.html', // IMPORTANT: Replace this!
+    oauthCallbackUrl: 'https://uzulee.github.io/blog/callback.html', // IMPORTANT: Replace this!
 };
