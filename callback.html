@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authenticating...</title>
+
+    <!-- Link to the same fonts and tokens as the main app -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles/tokens.css">
+
+    <style>
+        :root {
+            /* Set default theme to dark, as it's the base theme */
+            color-scheme: dark;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--c-bg-base, #0b0d10);
+            color: var(--c-text-primary, #e9eef6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--sp-6, 1.5rem);
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid var(--c-border-medium, rgba(255, 255, 255, 0.12));
+            border-top-color: var(--c-primary, #5aa2ff);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        h1 {
+            font-size: var(--text-2xl, 1.5rem);
+            font-weight: var(--fw-bold, 700);
+            margin: 0;
+        }
+
+        p {
+            font-size: var(--text-base, 1rem);
+            color: var(--c-text-secondary, #98a2b3);
+            max-width: 300px;
+            line-height: var(--lh-relaxed, 1.625);
+            margin: 0;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="spinner"></div>
+        <h1>Authenticating...</h1>
+        <p>Please wait while we connect to your account. This window will close or redirect automatically.</p>
+    </div>
+
+    <script type="module">
+        // This script handles the OAuth callback
+        import { handleAuthCallback } from './js/auth.js';
+        handleAuthCallback();
+    </script>
+
+</body>
+</html>
