@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A modern wiki blog with graph visualization">
+    <title>Blog</title>
+
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="./styles/tokens.css?v=2">
+    <link rel="stylesheet" href="./styles/base.css?v=2">
+    <link rel="stylesheet" href="./styles/theme.css?v=2">
+    <link rel="stylesheet" href="./styles/home.css?v=2">
+    <style>
+.cmd-context { font-size: 0.8rem; color: var(--c-text-tertiary); }
+.cmd-matched-tag { font-size: 0.75rem; color: var(--c-primary); font-weight: 500; }
+    </style>
+
+    <!-- External Libraries CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+    <!-- App Container -->
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <button id="btn-sidebar-toggle" class="btn ghost" title="Toggle sidebar">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="12" x2="17" y2="12"></line>
+                        <line x1="3" y1="6" x2="17" y2="6"></line>
+                        <line x1="3" y1="18" x2="17" y2="18"></line>
+                    </svg>
+                </button>
+                <div class="brand">
+                    <a href="#" class="brand-link" id="home-link">✒️ <span id="blog-title"></span></a>
+                </div>
+            </div>
+
+            <!-- Command Palette Search -->
+            <div class="search-container">
+                <input
+                    type="search"
+                    id="command-input"
+                    placeholder="Search or type '>' for commands..."
+                    autocomplete="off"
+                >
+                <div id="command-results" class="command-results"></div>
+            </div>
+
+            <div class="actions">
+                <button id="btn-search-mobile" class="btn ghost btn-search-mobile" title="Search">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="8.5" cy="8.5" r="5.5"/>
+                        <path d="M12.5 12.5L17 17"/>
+                    </svg>
+                </button>
+                <button id="btn-theme" class="btn ghost" title="Toggle theme">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <circle cx="10" cy="10" r="4" fill="currentColor"/>
+                        <path d="M10 2v2m0 12v2M4.22 4.22l1.42 1.42m8.72 8.72l1.42 1.42M2 10h2m12 0h2M4.22 15.78l1.42-1.42m8.72-8.72l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+                <button id="btn-graph" class="btn ghost" title="Show graph">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <circle cx="5" cy="5" r="2.5" fill="currentColor"/>
+                        <circle cx="15" cy="5" r="2.5" fill="currentColor"/>
+                        <circle cx="5" cy="15" r="2.5" fill="currentColor"/>
+                        <circle cx="15" cy="15" r="2.5" fill="currentColor"/>
+                        <path d="M7.5 5h5M7.5 15h5M5 7.5v5M15 7.5v5" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                </button>
+                <button id="btn-auxpanel-toggle" class="btn ghost" title="Toggle panel">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="12" x2="17" y2="12"></line>
+                        <line x1="3" y1="6" x2="17" y2="6"></line>
+                        <line x1="3" y1="18" x2="17" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Mobile Overlay -->
+        <div class="mobile-overlay" id="mobile-overlay"></div>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Sidebar -->
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <h3>Documents</h3>
+                </div>
+                <nav id="file-tree" class="file-tree"></nav>
+            </aside>
+
+            <!-- Content Area -->
+            <section class="content-area" id="content-area">
+                <!-- Placeholder -->
+                <div id="placeholder" class="placeholder">
+                    <div class="placeholder-content">
+                        <h1>Welcome to Wiki Blog</h1>
+                        <p>Configure your GitHub repository in <code>js/config.js</code></p>
+                        <p>Or select a document from the sidebar to begin.</p>
+                    </div>
+                </div>
+
+                <div id="home-page-content"></div>
+
+                <div id="results-page" style="display: none;"></div>
+
+                <!-- Document -->
+                <article id="document" class="document" style="display: none;">
+                    <div class="breadcrumbs" id="breadcrumbs"></div>
+                    <div class="doc-header">
+                        <div class="doc-title-container">
+                            <h1 id="doc-title"></h1>
+                            <button id="btn-bookmark" class="btn ghost" title="Toggle bookmark">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                    <path d="M14.5 18.5L10 15.5L5.5 18.5V4.5C5.5 3.39543 6.39543 2.5 7.5 2.5H12.5C13.6046 2.5 14.5 3.39543 14.5 4.5V18.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div id="doc-meta-info" class="doc-meta-info"></div>
+                        <div class="doc-meta">
+                            <div id="doc-tags" class="doc-tags"></div>
+                        </div>
+                    </div>
+                    <div id="doc-content" class="doc-content"></div>
+
+                    <section id="comments-section" class="comments-section giscus-section" style="display: none;">
+                        <h3>Comments</h3>
+                        <div class="giscus"></div>
+                    </section>
+
+                    <div id="backlinks" class="backlinks-section"></div>
+                </article>
+
+                <section id="folder-view" class="folder-view" style="display: none;"></section>
+            </section>
+
+            <!-- Aux Panel -->
+            <aside class="aux-panel" id="aux-panel">
+                <div id="panels-right" class="panels-container"></div>
+            </aside>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p id="status">Ready</p>
+        </footer>
+    </div>
+
+    <!-- Graph Modal -->
+    <dialog id="graph-modal" class="graph-modal">
+        <div class="graph-modal-content">
+            <div class="modal-header">
+                <h2 class="graph-title">Document Graph</h2>
+                <div class="modal-controls">
+                    <input type="search" id="graph-search" placeholder="Filter nodes..." class="graph-search">
+                    <button id="btn-toggle-3d" class="btn ghost" title="Toggle 3D/2D">3D</button>
+                    <button id="btn-fullscreen" class="btn ghost" title="Fullscreen">⛶</button>
+                    <button id="close-graph" class="btn ghost">✕</button>
+                </div>
+            </div>
+            <div id="graph-container" class="graph-container"></div>
+        </div>
+    </dialog>
+
+    <!-- Quick View Popup -->
+    <div id="quick-view-popup">
+        <div class="quick-view-content">
+            <h4 id="quick-view-title" class="quick-view-title">
+                <span class="icon">📄</span>
+                <span class="text"></span>
+            </h4>
+            <div id="quick-view-body" class="quick-view-body"></div>
+        </div>
+    </div>
+
+    <!-- Panels Modal (Mobile) -->
+    <dialog id="panels-modal" class="panels-modal">
+        <div class="panels-modal-content">
+            <div class="modal-header">
+                <h2>Document Info</h2>
+                <button id="close-panels" class="btn ghost">✕</button>
+            </div>
+            <div id="panels-modal-body" class="panels-modal-body"></div>
+        </div>
+    </dialog>
+
+    <!-- External Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/idb@7/build/umd.js"></script>
+    <script src="https://unpkg.com/flexsearch@0.7.31/dist/flexsearch.bundle.js"></script>
+    <script src="https://unpkg.com/three@0.138.3/build/three.min.js"></script>
+    <script src="https://unpkg.com/3d-force-graph@1.70.5/dist/3d-force-graph.min.js"></script>
+    <script src="https://unpkg.com/three-spritetext@1.6.3/dist/three-spritetext.min.js"></script>
+    <script src="https://unpkg.com/cytoscape@3.28.1/dist/cytoscape.min.js"></script>
+    <script src="https://unpkg.com/layout-base@2.0.1/layout-base.js"></script>
+    <script src="https://unpkg.com/cose-base@2.2.0/cose-base.js"></script>
+    <script src="https://unpkg.com/cytoscape-cose-bilkent@4.1.0/cytoscape-cose-bilkent.js"></script>
+    <script src="https://unpkg.com/cytoscape-dagre@2.5.0/cytoscape-dagre.js"></script>
+
+    <!-- App -->
+    <script type="module" src="./js/app.js?v=5"></script>
+</body>
+</html>
