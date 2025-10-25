@@ -110,7 +110,6 @@ const $ = {
   blogTitle: document.getElementById("blog-title"),
   btnSearchMobile: document.getElementById("btn-search-mobile"),
   btnSearchDesktop: document.getElementById("btn-search-desktop"),
-  btnSearchClose: document.getElementById("btn-search-close"),
   settingsBackdrop: document.getElementById("settings-backdrop"),
   settingsPanel: document.getElementById("settings-panel"),
   btnSettings: document.getElementById("btn-settings"),
@@ -1959,29 +1958,12 @@ async function clearCache() {
   alert("Cache cleared");
 }
 
-function toggleDesktopSearch(forceState) {
-    state.isSearchDesktopOpen = forceState !== undefined ? forceState : !state.isSearchDesktopOpen;
-    const header = document.querySelector(".header");
-
-    if (state.isSearchDesktopOpen) {
-        header.classList.add("search-active");
-        $.commandInput.focus();
-    } else {
-        header.classList.remove("search-active");
-        $.commandInput.value = "";
-        hideCommandResults();
-    }
-}
-
 function toggleMobileSearch() {
-  if (state.isSearchDesktopOpen) {
-    toggleDesktopSearch(false);
-  }
   state.isSearchMobileOpen = !state.isSearchMobileOpen;
   const header = document.querySelector(".header");
 
   if (state.isSearchMobileOpen) {
-    // Hide brand and show search input full width
+    // Hide everything except search container
     header.classList.add("search-mode");
     $.commandInput.focus();
   } else {
@@ -1995,7 +1977,29 @@ function bindEvents() {
   // Mobile search button
   $.btnSearchMobile?.addEventListener("click", toggleMobileSearch);
   $.btnSearchDesktop?.addEventListener("click", () => toggleDesktopSearch(true));
-  $.btnSearchClose?.addEventListener("click", () => toggleDesktopSearch(false));
+
+  // The search close button was removed, so this listener is no longer needed.
+  // $.btnSearchClose?.addEventListener("click", () => {
+  //   if (state.isSearchDesktopOpen) {
+  //     toggleDesktopSearch(false);
+  //   }
+  //   if (state.isSearchMobileOpen) {
+  //     toggleMobileSearch();
+  //   }
+  // });
+
+  $.commandInput?.addEventListener("blur", () => {
+    // If mobile search is open, close it when the input loses focus.
+    if (state.isSearchMobileOpen) {
+      // Use a small timeout to allow a click on a result to register before closing
+      setTimeout(() => {
+        // Re-check focus. If focus has moved to a child of the results, don't close.
+        if (!$.commandResults.contains(document.activeElement)) {
+          toggleMobileSearch();
+        }
+      }, 150);
+    }
+  });
 
   $.btnSettings?.addEventListener("click", () => toggleSettingsPanel(true));
   $.btnSettingsClose?.addEventListener("click", () => toggleSettingsPanel(false));

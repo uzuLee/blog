@@ -74,13 +74,8 @@ function getStats(metaCache, graphIndex, getBacklinks, t) {
     ];
 }
 
-let heroRotationInterval = null;
-
 export function cleanupHeroCard() {
-    if (heroRotationInterval) {
-        clearInterval(heroRotationInterval);
-        heroRotationInterval = null;
-    }
+    // The hero card subtitle rotation has been disabled as per user request.
 }
 
 export const heroCard = {
@@ -94,31 +89,7 @@ export const heroCard = {
             <p class="hero-subtitle">${meaningfulSubtitle}</p>
         `;
     },
-    init: (state, $, metaCache, graphIndex, getBacklinks, CONFIG, t) => {
-        // Clear any existing interval
-        if (heroRotationInterval) {
-            clearInterval(heroRotationInterval);
-        }
-
-        const heroCard = document.querySelector('.hero-card');
-        if (!heroCard) return;
-
-        const subtitle = heroCard.querySelector('.hero-subtitle');
-        if (!subtitle) return;
-
-        // Rotate stats every 5 seconds
-        heroRotationInterval = setInterval(() => {
-            const statsFunctions = getStats(metaCache, graphIndex, getBacklinks, t);
-            const newSubtitle = statsFunctions[Math.floor(Math.random() * statsFunctions.length)]();
-
-            // Fade out
-            subtitle.style.opacity = '0';
-
-            setTimeout(() => {
-                subtitle.textContent = newSubtitle;
-                // Fade in
-                subtitle.style.opacity = '1';
-            }, 300);
-        }, 5000);
+    init: () => {
+        // The hero card subtitle rotation has been disabled as per user request.
     }
 };

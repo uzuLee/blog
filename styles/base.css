@@ -222,12 +222,15 @@ body[data-theme="dark"]::before {
   flex: 1;
   max-width: 480px;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
 }
 
 /* Input styling */
 .search-container input {
   width: 100%;
-  padding-right: 40px; /* Space for close button */
+  /* Increased padding to prevent overlap with close button */
+  padding-right: 56px;
 }
 
 .command-results {
@@ -259,7 +262,7 @@ body[data-theme="dark"]::before {
   flex-shrink: 0;
 }
 
-/* Search buttons - hidden by default on all screens */
+/* Search buttons - hidden on desktop, shown on mobile */
 .btn-search-mobile {
   display: none !important;
 }
@@ -268,27 +271,26 @@ body[data-theme="dark"]::before {
   display: none !important;
 }
 
-/* Close button inside search container - always hidden on desktop */
+/* Close button inside search container - hidden by default */
 .btn-search-close {
-  display: none !important;
+  display: none;
   position: absolute;
-  right: 8px;
+  right: 8px; /* Position from the right edge */
   top: 50%;
   transform: translateY(-50%);
   z-index: 10;
+  /* Padding is inherited from .btn.ghost for consistency with other header buttons */
 }
 
-/* Mobile Search Mode - Only active on mobile when search button is clicked */
-.header.search-mode .header-left .brand {
-  opacity: 0;
-  transform: translateX(-20px);
-  pointer-events: none;
+/* Ensure hover transform is combined correctly to prevent jumping */
+.btn-search-close:hover {
+    /* The base .btn.ghost:hover has a transform that conflicts. */
+    /* We only keep the vertical centering transform to prevent animation bugs. */
+    transform: translateY(-50%);
 }
 
-.header.search-mode .search-container {
-  max-width: none;
-  flex: 1;
-  opacity: 1;
+.header:not(.search-mode) .btn-search-close {
+    display: none !important;
 }
 
 /* ========================================
@@ -1784,7 +1786,8 @@ body.modal-open {
     opacity: 1;
     transform: translateX(0);
     pointer-events: auto;
-    max-width: none;
+    width: 80%;
+    max-width: 420px;
     position: relative;
   }
 
@@ -1793,9 +1796,14 @@ body.modal-open {
     display: inline-flex !important;
   }
 
-  /* Hide mobile search button when search is active */
-  .header.search-mode .btn-search-mobile {
-    display: none !important;
+  /* Hide everything except search container when in search mode */
+  .header.search-mode {
+    justify-content: center;
+  }
+
+  .header.search-mode .header-left,
+  .header.search-mode .actions {
+    display: none;
   }
 
   /* Make command results full width on mobile */
@@ -2689,4 +2697,11 @@ iframe.giscus-frame {
 .graph-tooltip .tooltip-path{
   opacity:.8;
   font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* Hide the search close button on desktop, even if search mode was triggered on mobile */
+@media (min-width: 769px) {
+  .header.search-mode .btn-search-close {
+    display: none !important;
+  }
 }
