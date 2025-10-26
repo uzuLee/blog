@@ -1094,35 +1094,8 @@ body[data-theme="dark"]::before {
 }
 
 .backlinks-section {
-  margin-top: var(--sp-16);
-  padding-top: var(--sp-8);
-  border-top: 1px solid var(--c-divider);
-}
-
-.backlinks-section h3 {
-  font-size: var(--text-lg);
-  font-weight: var(--fw-semibold);
-  color: var(--c-text-primary);
-  margin-bottom: var(--sp-4);
-}
-
-.backlinks-list {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-2);
-}
-
-.backlink {
-  color: var(--c-primary);
-  text-decoration: none;
-  font-size: var(--text-sm);
-  transition: color var(--duration-fast) var(--ease-out);
-}
-
-.backlink:hover {
-  color: var(--c-primary-hover);
+  /* Hidden: backlinks are shown in right panel instead */
+  display: none;
 }
 
 .breadcrumbs {

@@ -25,6 +25,7 @@ import { COMMANDS } from "./commands/index.js";
 import { HOME_CARDS, FOLDER_CARDS, cleanupHeroCard, statsCard, tagsCard } from "./home-cards/index.js";
 import { VanillaGraph } from "./graph.js";
 import { languages } from "./i18n/index.js";
+import easterEggManager from "./easter-eggs/index.js";
 
 // ============================================ 
 // Library Check
@@ -841,7 +842,10 @@ function showHome() {
   updateActiveFileInList();
   renderPanels(null); // Clear panels for non-document pages
 
-  window.location.hash = "";
+  // Only update hash if it's not already empty (prevents double rendering)
+  if (window.location.hash !== "") {
+    window.location.hash = "";
+  }
   updateStatus(t("status.ready"));
 }
 
@@ -2380,6 +2384,12 @@ async function init() {
     createCustomDropdown($.languageSelect);
 
     bindEvents();
+
+    // Initialize easter eggs
+    easterEggManager.init();
+
+    // Make easter egg manager available globally for debugging
+    window.easterEggManager = easterEggManager;
 
     const decodedInitialHash = decodeURIComponent(
       window.location.hash.slice(1)
