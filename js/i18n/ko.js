@@ -89,4 +89,18 @@ export const ko = {
     "time.weeks_ago": "주 전",
     "time.months_ago": "개월 전",
     "time.years_ago": "년 전",
+
+    // Status
+    "status.ready": "준비",
+    "status.initializing": "초기화 중...",
+    "status.fetching_files": "파일 목록 가져오는 중...",
+    "status.indexing": "문서 색인 중...",
+    "status.building_graph": "그래프 생성 중...",
+    "status.building_search_index": "검색 색인 생성 중...",
+    "status.loading": "{title} 불러오는 중...",
+    "status.viewing": "{title} 보기",
+    "status.viewing_folder": "폴더 보기: {folder}",
+    "status.viewing_search_results": "검색 결과 보기",
+    "status.settings_reset": "설정이 기본값으로 재설정되었습니다",
+    "status.error": "오류: {message}",
 };

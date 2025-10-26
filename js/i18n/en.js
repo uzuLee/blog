@@ -89,4 +89,18 @@ export const en = {
     "time.weeks_ago": "w ago",
     "time.months_ago": "mo ago",
     "time.years_ago": "y ago",
+
+    // Status
+    "status.ready": "Ready",
+    "status.initializing": "Initializing...",
+    "status.fetching_files": "Fetching file list...",
+    "status.indexing": "Indexing documents...",
+    "status.building_graph": "Building graph...",
+    "status.building_search_index": "Building search index...",
+    "status.loading": "Loading {title}...",
+    "status.viewing": "Viewing: {title}",
+    "status.viewing_folder": "Viewing folder: {folder}",
+    "status.viewing_search_results": "Viewing search results",
+    "status.settings_reset": "Settings reset to defaults",
+    "status.error": "Error: {message}",
 };

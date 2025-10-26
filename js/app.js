@@ -203,11 +203,104 @@ function initShowdown() {
   });
 }
 
-// ============================================ 
+// ============================================
 // Utilities
-// ============================================ 
+// ============================================
 function updateStatus(msg) {
   if ($.status) $.status.textContent = msg;
+}
+
+// ============================================
+// Custom Dropdown
+// ============================================
+function createCustomDropdown(selectElement) {
+  const container = document.createElement('div');
+  container.className = 'custom-dropdown';
+
+  const trigger = document.createElement('div');
+  trigger.className = 'custom-dropdown-trigger';
+
+  const selectedText = document.createElement('span');
+  selectedText.textContent = selectElement.options[selectElement.selectedIndex].text;
+
+  const arrow = document.createElement('svg');
+  arrow.className = 'custom-dropdown-arrow';
+  arrow.setAttribute('width', '16');
+  arrow.setAttribute('height', '16');
+  arrow.setAttribute('viewBox', '0 0 16 16');
+  arrow.setAttribute('fill', 'none');
+  arrow.setAttribute('stroke', 'currentColor');
+  arrow.setAttribute('stroke-width', '2');
+  arrow.setAttribute('stroke-linecap', 'round');
+  arrow.setAttribute('stroke-linejoin', 'round');
+  arrow.innerHTML = '<path d="M4 6l4 4 4-4"/>';
+
+  trigger.appendChild(selectedText);
+  trigger.appendChild(arrow);
+
+  const menu = document.createElement('div');
+  menu.className = 'custom-dropdown-menu';
+
+  // Create options
+  Array.from(selectElement.options).forEach((option, index) => {
+    const optionEl = document.createElement('div');
+    optionEl.className = 'custom-dropdown-option';
+    if (option.selected) optionEl.classList.add('selected');
+    optionEl.textContent = option.text;
+    optionEl.dataset.value = option.value;
+    optionEl.dataset.index = index;
+
+    optionEl.addEventListener('click', () => {
+      // Update select element
+      selectElement.selectedIndex = index;
+      selectElement.dispatchEvent(new Event('change'));
+
+      // Update UI
+      menu.querySelectorAll('.custom-dropdown-option').forEach(opt => {
+        opt.classList.remove('selected');
+      });
+      optionEl.classList.add('selected');
+      selectedText.textContent = option.text;
+
+      // Close menu
+      trigger.classList.remove('open');
+      menu.classList.remove('open');
+    });
+
+    menu.appendChild(optionEl);
+  });
+
+  // Toggle menu
+  trigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = trigger.classList.contains('open');
+
+    // Close all other dropdowns
+    document.querySelectorAll('.custom-dropdown-trigger.open').forEach(t => {
+      if (t !== trigger) {
+        t.classList.remove('open');
+        t.nextElementSibling.classList.remove('open');
+      }
+    });
+
+    trigger.classList.toggle('open', !isOpen);
+    menu.classList.toggle('open', !isOpen);
+  });
+
+  // Close on outside click
+  document.addEventListener('click', () => {
+    trigger.classList.remove('open');
+    menu.classList.remove('open');
+  });
+
+  container.appendChild(trigger);
+  container.appendChild(menu);
+
+  // Replace select element
+  selectElement.style.display = 'none';
+  selectElement.parentNode.insertBefore(container, selectElement);
+
+  return container;
 }
 
 async function toggleBookmark(path) {
@@ -749,7 +842,7 @@ function showHome() {
   renderPanels(null); // Clear panels for non-document pages
 
   window.location.hash = "";
-  updateStatus("Ready");
+  updateStatus(t("status.ready"));
 }
 
 function updateTime() {
@@ -863,23 +956,26 @@ function showFolderPage(folderPath) {
   updateActiveFileInList();
   renderPanels(null); // Clear panels for non-document pages
 
-  updateStatus(`Viewing folder: ${folderPath}`);
+  updateStatus(t("status.viewing_folder").replace("{folder}", folderPath));
 }
 
-// ============================================ 
+// ============================================
 // Search & Tag Results Page
-// ============================================ 
+// ============================================
 function renderSearchResultsPage(results, query) {
   const resultsHTML =
     results.length > 0
       ? results
-          .map((item) => {
-            const meta = item.doc || item;
+          .map((meta) => {
+            const tagsHTML = meta.tags && meta.tags.length > 0
+              ? `<div class="file-tags">${meta.tags.map(tag => `<span class="tag-badge">#${tag}</span>`).join(' ')}</div>`
+              : '';
             return `
             <div class="recent-file-item" data-path="${meta.path}">
                 <span class="recent-file-icon">📄</span>
                 <div class="recent-file-info">
                     <div class="recent-file-title">${meta.title}</div>
+                    ${tagsHTML}
                     <div class="recent-file-time">${meta.path}</div>
                 </div>
             </div>
@@ -888,9 +984,15 @@ function renderSearchResultsPage(results, query) {
           .join("")
       : `<p style="color: var(--c-text-tertiary); text-align: center; padding: var(--sp-4);">${t('search.no_results')}</p>`;
 
-  // Import cards
-  const statsCardHTML = statsCard.render(state, $, metaCache, graphIndex, getBacklinks, CONFIG, t);
-  const tagsCardHTML = tagsCard.render(state, $, metaCache, graphIndex, getBacklinks, CONFIG, t);
+  // Create filtered metaCache with only search results
+  const filteredMetaCache = new Map();
+  results.forEach(meta => {
+    filteredMetaCache.set(meta.path, meta);
+  });
+
+  // Import cards with filtered data
+  const statsCardHTML = statsCard.render(state, $, filteredMetaCache, graphIndex, getBacklinks, CONFIG, t);
+  const tagsCardHTML = tagsCard.render(state, $, filteredMetaCache, graphIndex, getBacklinks, CONFIG, t);
 
   const html =
     `
@@ -933,10 +1035,10 @@ function renderSearchResultsPage(results, query) {
     });
   });
 
-  // Bind tags card events
+  // Bind tags card events with filtered metaCache
   const tagsCardElement = $.resultsPage.querySelector('.tags-card');
   if (tagsCardElement && tagsCard.bindEvents) {
-    tagsCard.bindEvents(tagsCardElement, metaCache, renderTagResultsPage, openDocument);
+    tagsCard.bindEvents(tagsCardElement, filteredMetaCache, renderTagResultsPage, openDocument);
   }
 
   showResultsPage();
@@ -951,6 +1053,9 @@ function renderTagResultsPage(tag, results) {
             const matchTypeLabel =
               item.matchType === "exact" ? t('tag.exact_match') : t('tag.partial_match');
             const matchedTagInfo = `<div class="cmd-matched-tag">${matchTypeLabel}: #${item.matchedTag}</div>`;
+            const tagsHTML = meta.tags && meta.tags.length > 0
+              ? `<div class="file-tags">${meta.tags.map(t => `<span class="tag-badge">#${t}</span>`).join(' ')}</div>`
+              : '';
 
             return `
             <div class="recent-file-item" data-path="${meta.path}">
@@ -958,6 +1063,7 @@ function renderTagResultsPage(tag, results) {
                 <div class="recent-file-info">
                     <div class="recent-file-title">${meta.title}</div>
                     ${matchedTagInfo}
+                    ${tagsHTML}
                     <div class="recent-file-time">${meta.path}</div>
                 </div>
             </div>
@@ -966,9 +1072,16 @@ function renderTagResultsPage(tag, results) {
           .join("")
       : `<p style="color: var(--c-text-tertiary); text-align: center; padding: var(--sp-4);">${t('tag.no_results')}</p>`;
 
-  // Render cards
-  const statsCardHTML = statsCard.render(state, $, metaCache, graphIndex, getBacklinks, CONFIG, t);
-  const tagsCardHTML = tagsCard.render(state, $, metaCache, graphIndex, getBacklinks, CONFIG, t);
+  // Create filtered metaCache with only tag search results
+  const filteredMetaCache = new Map();
+  results.forEach(item => {
+    const meta = item.doc || item;
+    filteredMetaCache.set(meta.path, meta);
+  });
+
+  // Render cards with filtered data
+  const statsCardHTML = statsCard.render(state, $, filteredMetaCache, graphIndex, getBacklinks, CONFIG, t);
+  const tagsCardHTML = tagsCard.render(state, $, filteredMetaCache, graphIndex, getBacklinks, CONFIG, t);
 
   const html =
     `
@@ -1010,10 +1123,10 @@ function renderTagResultsPage(tag, results) {
     });
   });
 
-  // Bind tags card events
+  // Bind tags card events with filtered metaCache
   const tagsCardElement = $.resultsPage.querySelector('.tags-card');
   if (tagsCardElement && tagsCard.bindEvents) {
-    tagsCard.bindEvents(tagsCardElement, metaCache, renderTagResultsPage, openDocument);
+    tagsCard.bindEvents(tagsCardElement, filteredMetaCache, renderTagResultsPage, openDocument);
   }
 
   showResultsPage();
@@ -1036,7 +1149,7 @@ function showResultsPage() {
 
   updateActiveFileInList();
   renderPanels(null); // Clear panels for non-document pages
-  updateStatus("Viewing search results");
+  updateStatus(t("status.viewing_search_results"));
 }
 
 // ============================================ 
@@ -1266,7 +1379,7 @@ async function openDocument(path) {
 
     let content = fileCache.get(path);
     if (!content) {
-      updateStatus(`Loading ${meta.title}...`);
+      updateStatus(t("status.loading").replace("{title}", meta.title));
       content = await fetchRaw(path, meta.sha);
       fileCache.set(path, content);
     }
@@ -1330,7 +1443,7 @@ async function openDocument(path) {
     }
 
     window.location.hash = encodeURIComponent(path);
-    updateStatus(`Viewing: ${meta.title}`);
+    updateStatus(t("status.viewing").replace("{title}", meta.title));
 
     const outlinks = Array.from(graphIndex.get(path)?.out || []);
     if (outlinks.length > 0) {
@@ -1487,7 +1600,9 @@ async function search(query) {
     results.forEach((fieldResult) => {
       fieldResult.result.forEach((doc) => {
         if (!combined.has(doc.id)) {
-          combined.set(doc.id, { ...metaCache.get(doc.id), ...doc });
+          // Get full metadata from metaCache to preserve tags and other info
+          const fullMeta = metaCache.get(doc.id);
+          combined.set(doc.id, fullMeta ? { ...fullMeta } : { path: doc.id, title: doc.doc?.title || doc.id });
         }
       });
     });
@@ -1520,7 +1635,7 @@ function hideCommandResults() {
 function handleCommandInput(event) {
   const query = event.target.value.trim();
   if (!query) {
-    hideCommandResults();
+    $.commandResults.style.display = "none";
     return;
   }
   if (query.startsWith(">")) {
@@ -1532,7 +1647,7 @@ function handleCommandInput(event) {
   } else if (query.startsWith("#")) {
     const tagQuery = query.slice(1).trim().toLowerCase();
     if (!tagQuery) {
-      hideCommandResults();
+      $.commandResults.style.display = "none";
       return;
     }
 
@@ -1583,7 +1698,7 @@ function handleCommandInput(event) {
 
 function renderCommandResults(items, isCommand, query, isTagSearch = false) {
   if (items.length === 0) {
-    hideCommandResults();
+    $.commandResults.style.display = "none";
     return;
   }
   const queryRegex = new RegExp(
@@ -1635,7 +1750,7 @@ function renderCommandResults(items, isCommand, query, isTagSearch = false) {
       }
     })
     .join("");
-  showCommandResults();
+  $.commandResults.style.display = "block";
 
   $.commandResults.querySelectorAll(".command-item").forEach((item) => {
     item.addEventListener("click", () => {
@@ -1648,7 +1763,7 @@ function renderCommandResults(items, isCommand, query, isTagSearch = false) {
         if (command) command.action();
       }
       $.commandInput.value = "";
-      hideCommandResults();
+      $.commandResults.style.display = "none";
     });
   });
 }
@@ -1813,8 +1928,8 @@ function resetSettings() {
     setLanguage(defaultLanguage);
 
     // Show confirmation
-    updateStatus("Settings reset to defaults");
-    setTimeout(() => updateStatus(t("common.ready")), 2000);
+    updateStatus(t("status.settings_reset"));
+    setTimeout(() => updateStatus(t("status.ready")), 2000);
 }
 
 function applyBranding() {
@@ -1969,7 +2084,7 @@ function toggleMobileSearch() {
   } else {
     header.classList.remove("search-mode");
     $.commandInput.value = "";
-    hideCommandResults();
+    $.commandResults.style.display = "none";
   }
 }
 
@@ -2020,7 +2135,7 @@ function bindEvents() {
       const query = e.target.value.trim();
       if (!query || query.startsWith(">")) return;
 
-      hideCommandResults();
+      $.commandResults.style.display = "none";
 
       if (query.startsWith("#")) {
         const tagQuery = query.slice(1).trim().toLowerCase();
@@ -2102,7 +2217,7 @@ function bindEvents() {
 
   document.addEventListener("click", (e) => {
     if (!$.commandInput.contains(e.target) && !$.commandResults.contains(e.target)) {
-      hideCommandResults();
+      $.commandResults.style.display = "none";
     }
   });
 
@@ -2220,7 +2335,7 @@ async function init() {
   }
 
   try {
-    updateStatus("Initializing...");
+    updateStatus(t("status.initializing"));
 
     await initCache();
 
@@ -2242,23 +2357,27 @@ async function init() {
 
     initShowdown();
 
-    updateStatus("Fetching file list...");
+    updateStatus(t("status.fetching_files"));
 
     state.allFiles = await fetchGitHubTree();
 
-    updateStatus("Indexing documents...");
+    updateStatus(t("status.indexing"));
 
     await indexFiles(state.allFiles, fetchRaw);
 
-    updateStatus("Building graph...");
+    updateStatus(t("status.building_graph"));
 
     buildGraph({ type: "global" });
 
-    updateStatus("Building search index...");
+    updateStatus(t("status.building_search_index"));
 
     initSearch();
 
     renderFileTree();
+
+    // Initialize custom dropdowns
+    createCustomDropdown($.fontFamilySelect);
+    createCustomDropdown($.languageSelect);
 
     bindEvents();
 
@@ -2272,9 +2391,9 @@ async function init() {
       showHome();
     }
 
-    updateStatus("Ready");
+    updateStatus(t("status.ready"));
   } catch (err) {
-    updateStatus(`Error: ${err.message}`);
+    updateStatus(t("status.error").replace("{message}", err.message));
   }
 }
 
