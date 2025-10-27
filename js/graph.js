@@ -75,7 +75,7 @@ function placeLabel(bx, by, bw, bh, placed) {
 // --- Naming & Language ---
 const groupOf = (id) => {
     if (!id) return '(root)';
-    const s = id.replace(/\/g, '/').split('/').filter(Boolean);
+    const s = id.replace(/\\/g, '/').split('/').filter(Boolean);
     return s[0] || '(root)';
 };
 
@@ -535,6 +535,7 @@ export class Renderer2D {
             this.tooltipEl.style.transform = `translate(${this.tooltipPos.x}px, ${this.tooltipPos.y}px) translate(-50%, -110%) scale(1)`;
         }
     }
+}
 
 // ===== 3D Renderer (using Three.js directly) =====
 export class Renderer3D {
