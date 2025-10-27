@@ -1331,7 +1331,7 @@ export class Renderer3D {
 
 // ===== App (headless core; no header UI) =====
 export class VanillaGraph {
-    constructor(container, { data = SAMPLE, mode = '2d', onNodeClick = null } = {}) {
+    constructor(container, { data = { nodes: [], links: [] }, mode = '2d', onNodeClick = null } = {}) {
         if (!container) throw new Error('container is required');
         this.container = container;
         this.onNodeClick = onNodeClick;
