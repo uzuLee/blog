@@ -2149,7 +2149,7 @@ export function createSpaceDefenderGame(container, canvas, onExit) {
         if (game.player.slowmoTimer > 0) game.player.slowmoTimer--; else game.player.slowmoActive = false;
 
         // Slowmo multiplier
-        const speedMultiplier = game.player.slowmoActive ? 0.5 : 1;
+        let speedMultiplier = game.player.slowmoActive ? 0.5 : 1;
 
         // Update sidekicks
         game.sidekicks.forEach(sidekick => {
